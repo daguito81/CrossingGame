@@ -19,13 +19,16 @@ class GameCharacter {
         this.maxSpeed = 4;
 
     }
-    moveH(){
+
+    moveH() {
         this.x += this.speed;
     }
-    moveV(){
+
+    moveV() {
         this.y += this.speed;
     }
 }
+
 let player = new GameCharacter(10, 225, 50, 50, "rgb(125, 125, 125)", 0)
 let enemies = [
     new GameCharacter(
@@ -49,8 +52,8 @@ function drawEntity(element) {
 }
 
 // Player Movement
-document.onkeydown = function(event){
-    if (event.code === "ArrowRight"){
+document.onkeydown = function (event) {
+    if (event.code === "ArrowRight") {
         player.speed = player.maxSpeed;
     } else if (event.code === "ArrowLeft") {
         player.speed = -player.maxSpeed;
@@ -60,7 +63,15 @@ document.onkeydown = function(event){
     testArea.innerHTML = event.code;
 }
 
-document.onkeyup = function(event){
+// Collision detection function
+function checkCollisions(rect1, rect2) {
+    return rect1.x < rect2.x + rect2.width &&
+        rect1.x + rect1.width > rect2.x &&
+        rect1.y < rect2.y + rect2.height &&
+        rect1.y + rect1.height > rect2.y;
+        }
+
+document.onkeyup = function () {
     player.speed = 0;
 }
 
@@ -71,14 +82,20 @@ function draw() {
 }
 
 function update() {
-    enemies.forEach(function(element){
-        if (element.y <= 10 || element.y >= screenHeight - element.height - 10){
+    enemies.forEach(function (element) {
+        if (element.y <= 10 || element.y >= screenHeight - element.height - 10) {
             element.speed = -element.speed
         }
         element.moveV();
     })
     player.moveH();
-    
+    let collision = checkCollisions(enemies[0], player)
+    if (collision){
+        testArea.innerHTML = "Collision";
+    } else {
+        testArea.innerHTML = "GOOD";
+    }
+
 }
 
 

@@ -25,7 +25,6 @@ class GameCharacter {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.color = color;
         this.speed = speed;
         this.maxSpeed = 4;
 
@@ -100,10 +99,6 @@ function checkCollisions(rect1, rect2) {
 // Canvas Drawing functions
 function clearScreen() {
     ctx.clearRect(0, 0, screenWidth, screenHeight)
-}
-
-function drawEntity(element) {
-    ctx.drawImage(element, element.x, element.y);
 }
 
 // This draws everything in the game canvas

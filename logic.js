@@ -42,7 +42,7 @@ class GameCharacter {
 
 // Creates instances for the player and several enemies
 let player = new GameCharacter(10, 225, 50, 50, "rgb(125, 125, 125)", 0)
-let goal = new GameCharacter(screenWidth - 20, 200, 20, 100, "rgb(255, 255, 255)", 0)
+let goal = new GameCharacter(screenWidth - 50, 225, 50, 50, "rgb(255, 255, 255)", 0)
 let enemies = [
     new GameCharacter(
         150, 250, 50, 50, "rgb(0, 0, 255)", 3
@@ -54,6 +54,22 @@ let enemies = [
         650, 50, 50, 50, "rgb(0, 0, 0)", 9
     )
 ]
+// Sprites
+let sprites = {};
+
+function loadSprites() {
+    sprites.player = new Image();
+    sprites.player.src = "images/hero.png";
+
+    sprites.enemy = new Image();
+    sprites.enemy.src = "images/enemy.png";
+
+    sprites.goal = new Image();
+    sprites.goal.src = "images/chest.png";
+
+    sprites.background = new Image();
+    sprites.background.src = "images/floor.png"
+}
 
 // This creates the player movement logic
 // Right Arrow to go right, and left arrow to go left
@@ -87,17 +103,21 @@ function clearScreen() {
 }
 
 function drawEntity(element) {
-    ctx.fillStyle = element.color;
-    ctx.fillRect(element.x, element.y, element.width, element.height);
+    ctx.drawImage(element, element.x, element.y);
 }
 
 // This draws everything in the game canvas
 function draw() {
     clearScreen()
-    enemies.forEach(drawEntity)
-    drawEntity(player)
-    drawEntity(goal)
+    ctx.drawImage(sprites.background, 0, 0);
+    ctx.drawImage(sprites.player, player.x, player.y);
+    ctx.drawImage(sprites.goal, goal.x, goal.y)
+
+    enemies.forEach(function(element){
+        ctx.drawImage(sprites.enemy, element.x, element.y);
+    })
 }
+
 
 // Checks if the game is ongoing and finished and whether you won or lost
 function checkGameState() {
@@ -144,6 +164,7 @@ function step() {
 }
 
 // This runs the game the first time
+loadSprites();
 step();
 
 // This function is to reset the game state to the beginning

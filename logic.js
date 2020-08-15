@@ -78,16 +78,16 @@ document.addEventListener("keydown", function (event) {
         player.speed = player.maxSpeed;
     } else if (event.code === "ArrowLeft") {
         player.speed = -player.maxSpeed;
-    } else {
-        player.speed = 0;
     }
     testArea.innerHTML = event.code;
 })
 
 // This stops the player from moving when key is let go
-document.onkeyup = function () {
-    player.speed = 0;
-}
+document.addEventListener("keyup", function (event) {
+    if (event.code === "ArrowRight" || event.code === "ArrowLeft") {
+        player.speed = 0;
+    }
+})
 
 // Collision detection function
 function checkCollisions(rect1, rect2) {
@@ -113,7 +113,7 @@ function draw() {
     ctx.drawImage(sprites.player, player.x, player.y);
     ctx.drawImage(sprites.goal, goal.x, goal.y)
 
-    enemies.forEach(function(element){
+    enemies.forEach(function (element) {
         ctx.drawImage(sprites.enemy, element.x, element.y);
     })
 }

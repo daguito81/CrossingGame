@@ -7,6 +7,13 @@ canvas.width = screenWidth;
 canvas.height = screenHeight;
 
 let testArea = document.getElementById('testing')
+let gameOutput = document.getElementById('output')
+let resetButton = document.getElementById('resetButton')
+
+let Game = {
+    on: true,
+    win: false,
+}
 
 class GameCharacter {
     constructor(x, y, width, height, color, speed) {
@@ -42,6 +49,30 @@ let enemies = [
     )
 ]
 
+// Player Movement
+document.addEventListener("keydown", function (event) {
+    if (event.code === "ArrowRight") {
+        player.speed = player.maxSpeed;
+    } else if (event.code === "ArrowLeft") {
+        player.speed = -player.maxSpeed;
+    } else {
+        player.speed = 0;
+    }
+    testArea.innerHTML = event.code;
+})
+
+// Collision detection function
+function checkCollisions(rect1, rect2) {
+    return rect1.x < rect2.x + rect2.width &&
+        rect1.x + rect1.width > rect2.x &&
+        rect1.y < rect2.y + rect2.height &&
+        rect1.y + rect1.height > rect2.y;
+}
+
+document.onkeyup = function () {
+    player.speed = 0;
+}
+
 function clearScreen() {
     ctx.clearRect(0, 0, screenWidth, screenHeight)
 }
@@ -51,34 +82,23 @@ function drawEntity(element) {
     ctx.fillRect(element.x, element.y, element.width, element.height);
 }
 
-// Player Movement
-document.onkeydown = function (event) {
-    if (event.code === "ArrowRight") {
-        player.speed = player.maxSpeed;
-    } else if (event.code === "ArrowLeft") {
-        player.speed = -player.maxSpeed;
-    } else {
-        player.speed = 0;
-    }
-    testArea.innerHTML = event.code;
-}
-
-// Collision detection function
-function checkCollisions(rect1, rect2) {
-    return rect1.x < rect2.x + rect2.width &&
-        rect1.x + rect1.width > rect2.x &&
-        rect1.y < rect2.y + rect2.height &&
-        rect1.y + rect1.height > rect2.y;
-        }
-
-document.onkeyup = function () {
-    player.speed = 0;
-}
-
 function draw() {
     clearScreen()
     enemies.forEach(drawEntity)
     drawEntity(player)
+}
+
+function checkGameState(){
+    let collision = checkCollisions(enemies[0], player) || checkCollisions(enemies[1], player) || checkCollisions(enemies[2], player)
+    if (collision) {
+        Game.win = false;
+        Game.on = false;
+        gameOutput.innerHTML = "Collision";
+    }
+    if (player.x + player.width >= screenWidth){
+        Game.on = false;
+        Game.win = true;
+    }
 }
 
 function update() {
@@ -89,26 +109,36 @@ function update() {
         element.moveV();
     })
     player.moveH();
-    let collision = checkCollisions(enemies[0], player)
-    if (collision){
-        testArea.innerHTML = "Collision";
-    } else {
-        testArea.innerHTML = "GOOD";
-    }
-
 }
-
 
 // Main game loop
 function step() {
     update();
     draw();
-
+    checkGameState();
 
     // Do everything before window.requestAnimationFrame
-    window.requestAnimationFrame(step);
+    if (Game.on === true) {
+        window.requestAnimationFrame(step);
+    } else {
+        if (Game.win === true){
+            gameOutput.innerHTML = "YOU WIN!"
+        } else {
+            gameOutput.innerHTML = "Game Over, You Lose!"
+        }
+    }
+
 }
 
 console.log("Game Loop starts")
 step();
 
+// Reset Game
+resetButton.addEventListener("click", function(){
+    Game.on=true;
+    Game.win=false;
+    gameOutput.innerHTML = "New Game";
+    player.x = 10
+    player.y = 225
+    step()
+})

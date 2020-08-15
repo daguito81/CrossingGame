@@ -133,12 +133,16 @@ function step() {
 console.log("Game Loop starts")
 step();
 
+
+function resetGame(){
+    if (Game.on !== true){
+        Game.on=true;
+        Game.win=false;
+        gameOutput.innerHTML = "New Game";
+        player.x = 10
+        player.y = 225
+        step()
+    }
+}
 // Reset Game
-resetButton.addEventListener("click", function(){
-    Game.on=true;
-    Game.win=false;
-    gameOutput.innerHTML = "New Game";
-    player.x = 10
-    player.y = 225
-    step()
-})
+resetButton.addEventListener("click", resetGame)
